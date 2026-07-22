@@ -5,3 +5,8 @@ from django.http import HttpResponse
 
 def test(request):
     return HttpResponse("hi")
+
+
+
+def home_view(request):
+    return render(request, 'home/home.html')

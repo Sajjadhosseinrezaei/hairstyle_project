@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- بخش معرفی با کلاس‌های بوت‌استرپ -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark">سامانه نوبت‌دهی زیبایی</h1>
+        <p class="text-secondary fs-5">رزرو آنلاین و سریع، بدون معطلی.</p>
+    </div>
+
+    <!-- کارت‌های خدمات (فقط با بوت‌استرپ) -->
+    <div class="row g-4 justify-content-center">
+        <!-- کارت ۱ -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">✂️ اصلاح</h5>
+                    <p class="text-muted small">خدمات تخصصی پیرایش و فرم‌دهی مو.</p>
+                </div>
+            </div>
+        </div>
+        <!-- کارت ۲ -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">✨ مراقبت پوست</h5>
+                    <p class="text-muted small">پاکسازی عمیق و جوانسازی صورت.</p>
+                </div>
+            </div>
+        </div>
+        <!-- کارت ۳ -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">🎨 رنگ و لایت</h5>
+                    <p class="text-muted small">استفاده از بهترین مواد ارگانیک.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- دکمه رزرو -->
+    <div class="text-center mt-5">
+        <a href="/reserve/" class="btn btn-primary btn-lg px-5 rounded-pill shadow">رزرو نوبت آنلاین</a>
+    </div>
+</div>
+{% endblock %}
