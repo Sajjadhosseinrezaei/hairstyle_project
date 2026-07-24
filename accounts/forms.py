@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from .models import User
 
@@ -42,3 +42,24 @@ class CustomUserCreationForm(UserCreationForm):
             'phone_number': _('شماره موبایل'),
             'role': _('نقش کاربری'),
         }
+
+
+class LoginForm(AuthenticationForm):
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        
+        # ۱. فارسی کردن لیبل فیلدها
+        self.fields['username'].label = _('نام کاربری')
+        self.fields['password'].label = _('رمز عبور')
+        
+        # ۲. اعمال کلاس‌های بوت‌استرپ برای ظاهر زیبا
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+    # ۳. فارسی کردن پیام‌های خطا (مانند اشتباه بودن نام کاربری یا رمز عبور)
+    error_messages = {
+        'invalid_login': _(
+            'لطفاً %(username)s و رمز عبور صحیح را وارد کنید. توجه داشته باشید که هر دو فیلد ممکن است به بزرگ و کوچک بودن حروف حساس باشند.'
+        ),
+        'inactive': _('این حساب کاربری غیرفعال است.'),
+    }
