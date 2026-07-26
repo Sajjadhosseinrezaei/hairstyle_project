@@ -1,47 +1,65 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load humanize %} {# لود کردن فیلتر humanize برای جداسازی سه رقم سه رقم قیمت #}
+
+{% block title %}صفحه اصلی - خدمات آرایشگاه{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <!-- بخش معرفی با کلاس‌های بوت‌استرپ -->
+    
+    <!-- هدر و عنوان صفحه -->
     <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-dark">سامانه نوبت‌دهی زیبایی</h1>
-        <p class="text-secondary fs-5">رزرو آنلاین و سریع، بدون معطلی.</p>
+        <h1 class="fw-bold text-primary display-6">خدمات آرایشگاه و نوبت‌دهی آنلاین</h1>
+        <p class="text-muted mt-2">خدمت مورد نظر خود را انتخاب کرده و زمان مناسب را رزرو کنید.</p>
     </div>
 
-    <!-- کارت‌های خدمات (فقط با بوت‌استرپ) -->
-    <div class="row g-4 justify-content-center">
-        <!-- کارت ۱ -->
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-                <div class="card-body">
-                    <h5 class="fw-bold mb-3">✂️ اصلاح</h5>
-                    <p class="text-muted small">خدمات تخصصی پیرایش و فرم‌دهی مو.</p>
+    <!-- لیست خدمات -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for service in services %}
+            <div class="col">
+                <div class="card h-100 border border-2 border-primary-subtle shadow-sm rounded-4">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        
+                        <div>
+                            <!-- نام خدمت -->
+                            <h4 class="card-title fw-bold text-dark mb-3">{{ service.name }}</h4>
+                            
+                            <!-- اطلاعات آرایشگر -->
+                            <div class="d-flex align-items-center mb-3 text-secondary">
+                                <i class="bi bi-person-badge ms-2 fs-5 text-primary"></i>
+                                <span>آرایشگر: <strong>{{ service.user.get_full_name|default:service.user.username }}</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <!-- قیمت خدمت سه رقم سه رقم -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted small">هزینه خدمت:</span>
+                                <span class="fw-bold fs-5 text-success">
+                                    {{ service.price|intcomma }} <small class="fs-6 text-muted">تومان</small>
+                                </span>
+                            </div>
+
+                            <!-- دکمه مشاهده و رزرو نوبت -->
+                            <div class="d-grid">
+                                <a href="#" class="btn btn-primary rounded-pill py-2 fw-semibold">
+                                    مشاهده زمان‌های خالی و رزرو
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- کارت ۲ -->
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-                <div class="card-body">
-                    <h5 class="fw-bold mb-3">✨ مراقبت پوست</h5>
-                    <p class="text-muted small">پاکسازی عمیق و جوانسازی صورت.</p>
+        {% empty %}
+            <!-- پیام در صورت عدم وجود خدمت -->
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info border border-info-subtle rounded-4 py-4" role="alert">
+                    <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                    در حال حاضر هیچ خدمتی در سامانه ثبت نشده است.
                 </div>
             </div>
-        </div>
-        <!-- کارت ۳ -->
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
-                <div class="card-body">
-                    <h5 class="fw-bold mb-3">🎨 رنگ و لایت</h5>
-                    <p class="text-muted small">استفاده از بهترین مواد ارگانیک.</p>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 
-    <!-- دکمه رزرو -->
-    <div class="text-center mt-5">
-        <a href="/reserve/" class="btn btn-primary btn-lg px-5 rounded-pill shadow">رزرو نوبت آنلاین</a>
-    </div>
 </div>
 {% endblock %}
