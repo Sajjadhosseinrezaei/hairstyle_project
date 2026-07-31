@@ -6,7 +6,7 @@ from .models import User
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     # ستون‌هایی که در جدول لیست کاربران نشان داده می‌شوند
-    list_display = ('username', 'phone_number', 'first_name', 'last_name', 'role', 'is_staff')
+    list_display = ('id','username', 'phone_number', 'first_name', 'last_name', 'role', 'is_staff')
     
     # فیلترهای سمت راست پنل ادمین
     list_filter = ('role', 'is_staff', 'is_superuser', 'is_active', 'created')

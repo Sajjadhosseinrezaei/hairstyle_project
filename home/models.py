@@ -1,7 +1,33 @@
 from django.db import models
 from accounts.models import User
+from django.utils.text import slugify
+
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, verbose_name='نام دسته‌بندی')
+    # اسلاگ برای آدرس‌های وب زیبا و SEO (مثال: /services/hair-cut/)
+    slug = models.SlugField(max_length=100, unique=True, allow_unicode=True, verbose_name='اسلاگ/آدرس')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+
+    class Meta:
+        verbose_name = 'دسته‌بندی'
+        verbose_name_plural = 'دسته‌بندی‌ها'
+
+    def __str__(self):
+        return self.name
+
 
 class Service(models.Model):
+
+    category = models.ForeignKey(
+            Category,
+            on_delete=models.SET_NULL, # اگر دسته‌بندی پاک شد، خدمت حذف نشود
+            null=True,
+            blank=True,
+            related_name='services',
+            verbose_name='دسته‌بندی'
+        )
     user = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 

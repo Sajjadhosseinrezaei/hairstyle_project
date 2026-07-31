@@ -1,64 +1,87 @@
 {% extends "base.html" %}
-{% load humanize %} {# لود کردن فیلتر humanize برای جداسازی سه رقم سه رقم قیمت #}
+{% load static %}
 
 {% block title %}صفحه اصلی - خدمات آرایشگاه{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     
-    <!-- هدر و عنوان صفحه -->
-    <div class="text-center mb-5">
-        <h1 class="fw-bold text-primary display-6">خدمات آرایشگاه و نوبت‌دهی آنلاین</h1>
-        <p class="text-muted mt-2">خدمت مورد نظر خود را انتخاب کرده و زمان مناسب را رزرو کنید.</p>
+    <!-- بنر اصلی هدر (با عکس header.png) -->
+    <div class="row align-items-center mb-5 p-4 p-lg-5 bg-primary-subtle rounded-5 shadow-sm">
+        <div class="col-lg-7 text-center text-lg-start mb-4 mb-lg-0">
+            <h1 class="fw-bold text-primary display-5 mb-3">سامانه آنلاین نوبت‌دهی آرایشگاه</h1>
+            <p class="lead text-secondary mb-0">
+                دسته‌بندی مورد نظر خود را انتخاب کنید تا لیست خدمات و آرایشگران حرفه‌ای به شما نمایش داده شود.
+            </p>
+        </div>
+        <div class="col-lg-5 text-center">
+            <img src="{% static 'images/header.png' %}" 
+                 alt="آرایشگاه و نوبت دهی آنلاین" 
+                 class="img-fluid rounded-4 shadow-lg border border-3 border-white"
+                 style="max-height: 300px; object-fit: cover;">
+        </div>
     </div>
 
-    <!-- لیست خدمات -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {% for service in services %}
-            <div class="col">
-                <div class="card h-100 border border-2 border-primary-subtle shadow-sm rounded-4">
-                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+    <!-- بخش دسته‌بندی‌ها -->
+    <div id="categories-list" class="pt-3">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark">دسته‌بندی‌های خدمات</h2>
+            <p class="text-muted">لطفاً خدمت مورد نظر خود را انتخاب کنید</p>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+            {% for category in categories %}
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden transition-hover">
                         
-                        <div>
-                            <!-- نام خدمت -->
-                            <h4 class="card-title fw-bold text-dark mb-3">{{ service.name }}</h4>
+                        <!-- عکس کارت دسته‌بندی -->
+                        <div class="position-relative" style="height: 240px;">
+                            {% if category.image %}
+                                <!-- عکس آپلود شده از ادمین -->
+                                <img src="{{ category.image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ category.name }}">
                             
-                            <!-- اطلاعات آرایشگر -->
-                            <div class="d-flex align-items-center mb-3 text-secondary">
-                                <i class="bi bi-person-badge ms-2 fs-5 text-primary"></i>
-                                <span>آرایشگر: <strong>{{ service.user.get_full_name|default:service.user.username }}</strong></span>
+                            {% elif "صورت" in category.name or "پوست" in category.name %}
+                                <!-- عکس استاتیک face.png -->
+                                <img src="{% static 'images/face.png' %}" class="w-100 h-100 object-fit-cover" alt="{{ category.name }}">
+                            
+                            {% else %}
+                                <!-- عکس استاتیک haircut.png -->
+                                <img src="{% static 'images/haircut.png' %}" class="w-100 h-100 object-fit-cover" alt="{{ category.name }}">
+                            {% endif %}
+
+                            <!-- لایه عنوان روی عکس -->
+                            <div class="card-img-overlay d-flex align-items-end p-0">
+                                <h3 class="text-white fw-bold p-3 m-0 fs-4 w-100" style="background: linear-gradient(transparent, rgba(0,0,0,0.85));">
+                                    {{ category.name }}
+                                </h3>
                             </div>
                         </div>
 
-                        <div class="mt-4 pt-3 border-top">
-                            <!-- قیمت خدمت سه رقم سه رقم -->
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="text-muted small">هزینه خدمت:</span>
-                                <span class="fw-bold fs-5 text-success">
-                                    {{ service.price|intcomma }} <small class="fs-6 text-muted">تومان</small>
-                                </span>
-                            </div>
+                        <!-- بدنه کارت -->
+                        <div class="card-body p-4 d-flex flex-column justify-content-between bg-white">
+                            <p class="text-muted small mb-3">
+                                مشاهده تمام خدمات و نوبت‌های فعال مربوط به {{ category.name }}
+                            </p>
 
-                            <!-- دکمه مشاهده و رزرو نوبت -->
-                            <div class="d-grid">
-                                <a href="#" class="btn btn-primary rounded-pill py-2 fw-semibold">
-                                    مشاهده زمان‌های خالی و رزرو
+                            <div class="d-grid mt-2">
+                                <a href="{% url 'home:category_services' category.id %}" class="btn btn-outline-primary rounded-pill py-2 fw-semibold">
+                                    انتخاب و مشاهده نوبت‌ها
+                                    <i class="bi bi-arrow-left ms-1"></i>
                                 </a>
                             </div>
                         </div>
 
                     </div>
                 </div>
-            </div>
-        {% empty %}
-            <!-- پیام در صورت عدم وجود خدمت -->
-            <div class="col-12 text-center py-5">
-                <div class="alert alert-info border border-info-subtle rounded-4 py-4" role="alert">
-                    <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
-                    در حال حاضر هیچ خدمتی در سامانه ثبت نشده است.
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-info border border-info-subtle rounded-4 py-4" role="alert">
+                        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                        هیچ دسته‌بندی در سامانه ثبت نشده است.
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 
 </div>

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load humanize %} {# برای سه رقم سه رقم کردن قیمت‌ها #}
+
+{% block title %}خدمات {{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <!-- هدر صفحه و دکمه بازگشت -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div>
+            <h1 class="fw-bold text-primary h3 m-0">خدمات دسته‌بندی: {{ category.name }}</h1>
+            <p class="text-muted small m-0 mt-1">لیست تمام خدمات فعال و آرایشگران این دسته</p>
+        </div>
+        <a href="{% url 'home:home' %}" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-right ms-1"></i>
+            بازگشت به دسته‌بندی‌ها
+        </a>
+    </div>
+
+    <!-- کارت‌های خدمات -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for service in services %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm rounded-4 transition-hover">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        
+                        <div>
+                            <!-- عنوان خدمت -->
+                            <h4 class="fw-bold text-dark mb-3">{{ service.name }}</h4>
+                            
+                            <!-- نام آرایشگر ارائه دهنده -->
+                            <div class="d-flex align-items-center mb-3 text-secondary">
+                                <i class="bi bi-person-circle fs-5 text-primary ms-2"></i>
+                                <span>آرایشگر: <strong>{{ service.user.get_full_name|default:service.user.username }}</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <!-- قیمت خدمت -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted small">هزینه خدمت:</span>
+                                <span class="fw-bold fs-5 text-success">
+                                    {{ service.price|intcomma }} <small class="fs-6 text-muted">تومان</small>
+                                </span>
+                            </div>
+
+                            <!-- دکمه رزرو نوبت -->
+                            <div class="d-grid">
+                                <a href="#" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                    انتخاب و رزرو زمان نوبت
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <!-- پیام در صورت عدم وجود خدمت برای این دسته‌بندی -->
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-warning border-0 shadow-sm rounded-4 py-4" role="alert">
+                    <i class="bi bi-exclamation-triangle fs-2 text-warning d-block mb-2"></i>
+                    هنوز هیچ خدمتی برای دسته‌بندی <strong>«{{ category.name }}»</strong> ثبت نشده است.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

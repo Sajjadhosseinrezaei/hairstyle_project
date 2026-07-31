@@ -1,6 +1,14 @@
 from django.contrib import admin
-from .models import Service, SlotTime
+from .models import Service, SlotTime, Category
 
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'created')
+    search_fields = ('name', 'slug')
+    # تولید خودکار اسلاگ بر اساس نام دسته‌بندی موقع تایپ در ادمین
+    prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
