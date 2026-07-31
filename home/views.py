@@ -30,3 +30,19 @@ class ServicesView(View):
             'services': services,
         }
         return render(request, self.template_name, context)
+
+
+
+
+class ServiceView(View):
+    template_name = 'home/service.html'
+
+    def get(self, request, service_id):
+
+        service = get_object_or_404(Service, id=service_id)
+        slots = service.user.slot_times.filter(
+            is_booked=False
+        ).order_by('day', 'start_time')
+
+        context = {"service": service, "slots": slots}
+        return render(request, self.template_name, context)

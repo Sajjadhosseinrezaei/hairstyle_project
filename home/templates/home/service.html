@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load jformat %}
+
+
+{% block title %}
+{{ service.name }}
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<div class="container py-5">
+
+
+    <div class="row justify-content-center">
+
+
+        <div class="col-lg-8">
+
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+
+                <div class="card-body p-4">
+
+
+                    <!-- اطلاعات خدمت -->
+
+                    <h1 class="fw-bold text-primary h3 mb-3">
+
+                        {{ service.name }}
+
+                    </h1>
+
+
+
+                    <div class="mb-3 text-secondary">
+
+                        <i class="bi bi-person-circle text-primary"></i>
+
+                        آرایشگر:
+
+                        <strong>
+
+                            {{ service.user.get_full_name|default:service.user.username }}
+
+                        </strong>
+
+                    </div>
+
+
+
+                    <div class="mb-4">
+
+                        <span class="text-muted">
+
+                            قیمت:
+
+                        </span>
+
+
+                        <strong class="text-success">
+
+                            {{ service.price|intcomma }}
+
+                            تومان
+
+                        </strong>
+
+                    </div>
+
+
+
+                    <hr>
+
+
+
+
+                    <form method="post">
+
+
+                        {% csrf_token %}
+
+
+
+                        <!-- فیلتر روز -->
+
+
+                        <label class="fw-bold mb-2">
+
+                            انتخاب روز:
+
+                        </label>
+
+
+
+                        <select id="dayFilter"
+                                class="form-select mb-4">
+
+
+                            <option value="all">
+
+                                همه روزها
+
+                            </option>
+
+
+
+                            {% for slot in slots %}
+
+
+                            <option value="{{ slot.day|date:'Y-m-d' }}">
+
+                                {{ slot.day|jformat:"%Y/%m/%d" }}
+
+
+                            </option>
+
+
+                            {% endfor %}
+
+
+
+                        </select>
+
+
+
+
+
+                        <!-- لیست اسلات‌ها -->
+
+
+                        <h5 class="fw-bold mb-3">
+
+
+                            <i class="bi bi-calendar-check text-primary"></i>
+
+                            زمان‌های آزاد
+
+
+                        </h5>
+
+
+
+
+
+                        <div class="row g-3"
+                             id="slotsContainer">
+
+
+
+                            {% for slot in slots %}
+
+
+
+                            <div class="col-md-4 slot-item"
+                                 data-day="{{ slot.day|date:'Y-m-d' }}">
+
+
+
+                                <label class="card border rounded-4 p-3 h-100 text-center"
+                                       style="cursor:pointer;">
+
+
+
+                                    <input type="radio"
+                                           name="slot_id"
+                                           value="{{ slot.id }}"
+                                           class="mb-2">
+
+
+
+
+
+                                    <div class="text-muted small">
+
+
+                                        {{ slot.day|jformat:"%Y/%m/%d" }}
+
+
+                                    </div>
+
+
+
+
+                                    <div class="fw-bold text-success mt-2">
+
+
+                                        {{ slot.start_time|time:"H:i" }}
+
+                                        تا
+
+                                        {{ slot.end_time|time:"H:i" }}
+
+
+
+                                    </div>
+
+
+
+                                </label>
+
+
+                            </div>
+
+
+
+                            {% empty %}
+
+
+
+                            <div class="alert alert-warning">
+
+                                زمان آزادی وجود ندارد.
+
+                            </div>
+
+
+
+                            {% endfor %}
+
+
+
+                        </div>
+
+
+
+
+
+                        <button type="submit"
+                                class="btn btn-primary rounded-pill px-4 mt-4">
+
+
+                            ادامه
+
+
+                        </button>
+
+
+
+                    </form>
+
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+
+<script>
+
+
+const dayFilter = document.getElementById("dayFilter");
+
+const slots = document.querySelectorAll(".slot-item");
+
+
+
+// حذف روزهای تکراری
+
+const seen = new Set();
+
+
+Array.from(dayFilter.options).forEach(option => {
+
+
+    if(option.value !== "all"){
+
+
+        if(seen.has(option.value)){
+
+            option.remove();
+
+        }
+        else{
+
+            seen.add(option.value);
+
+        }
+
+
+    }
+
+
+});
+
+
+
+
+
+// فیلتر اسلات‌ها
+
+dayFilter.addEventListener(
+    "change",
+    function(){
+
+
+        const selectedDay = this.value;
+
+
+
+        slots.forEach(slot => {
+
+
+
+            const slotDay = slot.dataset.day;
+
+
+
+            if(
+                selectedDay === "all" ||
+                selectedDay === slotDay
+            ){
+
+
+                slot.style.display = "";
+
+
+            }
+            else{
+
+
+                slot.style.display = "none";
+
+
+                const radio = slot.querySelector("input");
+
+
+                if(radio.checked){
+
+                    radio.checked = false;
+
+                }
+
+
+            }
+
+
+
+        });
+
+
+
+    }
+);
+
+
+
+</script>
+
+
+
+{% endblock %}

@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
     'order.apps.OrderConfig',
+
+    # third party app
+    'django_jalali',
 ]
 
 MIDDLEWARE = [
