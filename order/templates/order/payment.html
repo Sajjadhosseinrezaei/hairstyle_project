@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load jformat %}
+{% block title %}
+پرداخت
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header text-center">
+                    <h3>تأیید پرداخت</h3>
+                </div>
+
+                <div class="card-body">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <table class="table">
+
+                        <tr>
+                            <th>خدمت</th>
+                            <td>{{ service.name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>تاریخ</th>
+                            <td>{{ slot.day|jformat:"%Y/%m/%d" }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>ساعت</th>
+                            <td>
+                                {{ slot.start_time }}
+                                تا
+                                {{ slot.end_time }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>مبلغ</th>
+                            <td>
+                                {{ amount }}
+                                تومان
+                            </td>
+                        </tr>
+
+                    </table>
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100">
+                            پرداخت
+                        </button>
+
+                    </form>
+
+                    <a href="{% url 'home:service' service.id %}"
+                       class="btn btn-outline-secondary w-100 mt-3">
+                        انصراف
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
