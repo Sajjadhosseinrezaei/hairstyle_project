@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}پرداخت ناموفق{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7 col-lg-5">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-body text-center p-5">
+
+                    <!-- آیکون -->
+                    <div class="mb-4">
+                        <i class="bi bi-x-circle-fill text-danger"
+                           style="font-size: 70px;">
+                        </i>
+                    </div>
+
+                    <!-- عنوان -->
+                    <h3 class="fw-bold text-danger mb-3">
+                        پرداخت ناموفق بود
+                    </h3>
+
+                    <!-- پیام -->
+                    <p class="text-muted mb-4">
+                        متأسفانه پرداخت شما انجام نشد.
+                        مبلغی از حساب شما کسر نشده است
+                        یا در صورت کسر شدن، پس از بررسی بانک
+                        به حساب شما بازگردانده خواهد شد.
+                    </p>
+
+                    {% if message %}
+                        <div class="alert alert-warning rounded-3">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+
+                    <!-- دکمه‌ها -->
+                    <div class="d-grid gap-2">
+
+                        <a
+                            href="{% url 'home:home' %}"
+                            class="btn btn-primary rounded-pill py-2"
+                        >
+                            بازگشت به صفحه اصلی
+                        </a>
+
+                        <a
+                            href="javascript:history.back()"
+                            class="btn btn-outline-secondary rounded-pill py-2"
+                        >
+                            تلاش مجدد برای پرداخت
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

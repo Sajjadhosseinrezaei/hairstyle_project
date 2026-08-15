@@ -9,4 +9,14 @@ urlpatterns = [
         views.PaymentView.as_view(),
         name="payment",
     ),
+    path(
+        "payment/callback/",
+        views.PaymentCallbackView.as_view(),
+        name="callback",
+    ),
+    path(
+        "payment/success/<int:order_id>/",
+        views.PaymentSuccessView.as_view(),
+        name="payment_success",
+    ),
 ]

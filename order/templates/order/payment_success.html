@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}پرداخت موفق{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7 col-lg-5">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-body text-center p-5">
+
+                    <div class="mb-4">
+                        <i
+                            class="bi bi-check-circle-fill text-success"
+                            style="font-size: 70px;"
+                        ></i>
+                    </div>
+
+                    <h3 class="fw-bold text-success mb-3">
+                        پرداخت با موفقیت انجام شد
+                    </h3>
+
+                    <p class="text-muted">
+                        رزرو شما با موفقیت ثبت شد.
+                    </p>
+
+                    <hr>
+
+                    <div class="text-start">
+
+                        <p>
+                            <strong>شماره سفارش:</strong>
+                            {{ order.id }}
+                        </p>
+
+                        <p>
+                            <strong>خدمت:</strong>
+                            {{ order.service.name }}
+                        </p>
+
+                        <p>
+                            <strong>تاریخ:</strong>
+                            {{ order.slot_time.day }}
+                        </p>
+
+                        <p>
+                            <strong>ساعت:</strong>
+                            {{ order.slot_time.start_time }}
+                            تا
+                            {{ order.slot_time.end_time }}
+                        </p>
+
+                        <p>
+                            <strong>مبلغ:</strong>
+                            {{ order.price|intcomma }}
+                            تومان
+                        </p>
+
+                        {% if order.ref_id %}
+                            <p>
+                                <strong>شماره مرجع:</strong>
+                                {{ order.ref_id }}
+                            </p>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="d-grid mt-4">
+
+                        <a
+                            href="{% url 'home:home' %}"
+                            class="btn btn-primary rounded-pill py-2"
+                        >
+                            بازگشت به صفحه اصلی
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
