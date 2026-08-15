@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, LoginForm
-from django.contrib import  messages
+from django.contrib import messages
 from django.views import View
 from django.contrib.auth import login, logout
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from order.models import Order
 # Create your views here.
+
 
 class UserCreationView(View):
     form_class = CustomUserCreationForm
@@ -44,7 +46,6 @@ class UserLoginView(View):
             return render(request, self.template_name, {"form": form})
 
 
-
 class UserLogoutView(View):
 
     def post(self, request):
@@ -53,5 +54,44 @@ class UserLogoutView(View):
         return redirect("home:home")
 
 
+class ProfileView(LoginRequiredMixin, View):
 
+    template_name = "accounts/profile.html"
 
+    def get(self, request):
+
+        orders = (
+            Order.objects
+            .filter(user=request.user)
+            .select_related(
+                "service",
+                "service__user",
+                "slot_time",
+            )
+            .order_by("-created")
+        )
+
+        paid_orders = orders.filter(
+            status=Order.StatusChoices.PAID
+        )
+
+        unpaid_orders = orders.filter(
+            status=Order.StatusChoices.PENDING
+        )
+
+        canceled_orders = orders.filter(
+            status=Order.StatusChoices.CANCELED
+        )
+
+        context = {
+            "orders": orders,
+            "paid_orders": paid_orders,
+            "unpaid_orders": unpaid_orders,
+            "canceled_orders": canceled_orders,
+        }
+
+        return render(
+            request,
+            self.template_name,
+            context,
+        )

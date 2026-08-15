@@ -1,0 +1,628 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}
+پروفایل من
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- ========================================= -->
+    <!-- هدر پروفایل -->
+    <!-- ========================================= -->
+
+    <div class="mb-5">
+
+        <div class="card border-0 shadow-sm rounded-4">
+
+            <div class="card-body p-4">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="me-3">
+                        <i class="bi bi-person-circle text-primary"
+                           style="font-size: 65px;">
+                        </i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="fw-bold mb-1">
+                            {{ request.user.get_full_name|default:request.user.username }}
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            {{ request.user.email }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- پرداخت‌های در انتظار -->
+    <!-- ========================================= -->
+
+    <div class="mb-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h3 class="fw-bold mb-0">
+                پرداخت‌های در انتظار
+            </h3>
+
+            <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                {{ unpaid_orders|length }}
+            </span>
+
+        </div>
+
+
+        {% if unpaid_orders %}
+
+            <div class="row g-4">
+
+                {% for order in unpaid_orders %}
+
+                    <div class="col-12 col-md-6 col-lg-4">
+
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                            <div class="card-body p-4">
+
+                                <!-- شماره سفارش -->
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                    <span class="text-muted small">
+                                        سفارش
+                                    </span>
+
+                                    <span class="fw-bold">
+                                        #{{ order.id }}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- نام سرویس -->
+
+                                <h4 class="fw-bold mb-3">
+                                    {{ order.service.name }}
+                                </h4>
+
+
+                                <!-- آرایشگر -->
+
+                                <div class="mb-2">
+
+                                    <i class="bi bi-person text-primary ms-1"></i>
+
+                                    آرایشگر:
+
+                                    <strong>
+                                        {{ order.service.user.get_full_name|default:order.service.user.username }}
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- تاریخ -->
+
+                                <div class="mb-2">
+
+                                    <i class="bi bi-calendar3 text-primary ms-1"></i>
+
+                                    تاریخ:
+
+                                    <strong class="jalali-date"
+                                            data-date="{{ order.slot_time.day|date:'Y-m-d' }}">
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- ساعت -->
+
+                                <div class="mb-3">
+
+                                    <i class="bi bi-clock text-primary ms-1"></i>
+
+                                    ساعت:
+
+                                    <strong>
+                                        {{ order.slot_time.start_time|time:"H:i" }}
+                                        -
+                                        {{ order.slot_time.end_time|time:"H:i" }}
+                                    </strong>
+
+                                </div>
+
+
+                                <hr>
+
+
+                                <!-- قیمت -->
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                    <span class="text-muted">
+                                        مبلغ:
+                                    </span>
+
+                                    <strong class="text-success fs-5">
+
+                                        {{ order.price|intcomma }}
+
+                                        <small>
+                                            تومان
+                                        </small>
+
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- وضعیت -->
+
+                                <div class="mb-3">
+
+                                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+
+                                        پرداخت نشده
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- ادامه پرداخت -->
+
+                                <div class="d-grid">
+
+                                    <a
+                                        href="{% url 'order:payment' order.service.id order.slot_time.id %}"
+                                        class="btn btn-primary rounded-pill py-2"
+                                    >
+
+                                        <i class="bi bi-credit-card ms-1"></i>
+
+                                        ادامه پرداخت
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-light border rounded-4 text-center py-4">
+
+                <i class="bi bi-check-circle text-success fs-2 d-block mb-2"></i>
+
+                هیچ پرداخت در انتظاری ندارید.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- رزروهای پرداخت شده -->
+    <!-- ========================================= -->
+
+    <div class="mb-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h3 class="fw-bold mb-0">
+                رزروهای من
+            </h3>
+
+            <span class="badge bg-success rounded-pill px-3 py-2">
+                {{ paid_orders|length }}
+            </span>
+
+        </div>
+
+
+        {% if paid_orders %}
+
+            <div class="row g-4">
+
+                {% for order in paid_orders %}
+
+                    <div class="col-12 col-md-6 col-lg-4">
+
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                            <div class="card-body p-4">
+
+                                <!-- هدر -->
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                    <span class="text-muted small">
+                                        سفارش #{{ order.id }}
+                                    </span>
+
+                                    <span class="badge bg-success rounded-pill">
+
+                                        پرداخت شده
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- سرویس -->
+
+                                <h4 class="fw-bold mb-3">
+
+                                    {{ order.service.name }}
+
+                                </h4>
+
+
+                                <!-- آرایشگر -->
+
+                                <div class="mb-2">
+
+                                    <i class="bi bi-person text-primary ms-1"></i>
+
+                                    آرایشگر:
+
+                                    <strong>
+                                        {{ order.service.user.get_full_name|default:order.service.user.username }}
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- تاریخ -->
+
+                                <div class="mb-2">
+
+                                    <i class="bi bi-calendar3 text-primary ms-1"></i>
+
+                                    تاریخ:
+
+                                    <strong class="jalali-date"
+                                            data-date="{{ order.slot_time.day|date:'Y-m-d' }}">
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- ساعت -->
+
+                                <div class="mb-3">
+
+                                    <i class="bi bi-clock text-primary ms-1"></i>
+
+                                    ساعت:
+
+                                    <strong>
+
+                                        {{ order.slot_time.start_time|time:"H:i" }}
+
+                                        -
+
+                                        {{ order.slot_time.end_time|time:"H:i" }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                <hr>
+
+
+                                <!-- مبلغ -->
+
+                                <div class="d-flex justify-content-between mb-2">
+
+                                    <span class="text-muted">
+                                        مبلغ پرداختی:
+                                    </span>
+
+                                    <strong class="text-success">
+
+                                        {{ order.price|intcomma }}
+
+                                        تومان
+
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- کد پیگیری -->
+
+                                <div class="d-flex justify-content-between">
+
+                                    <span class="text-muted">
+                                        کد پیگیری:
+                                    </span>
+
+                                    <strong>
+
+                                        {{ order.ref_id }}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-light border rounded-4 text-center py-4">
+
+                <i class="bi bi-calendar-x text-muted fs-2 d-block mb-2"></i>
+
+                هنوز رزروی ندارید.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- سفارش‌های لغو شده -->
+    <!-- ========================================= -->
+
+    {% if canceled_orders %}
+
+        <div class="mb-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h3 class="fw-bold mb-0">
+                    سفارش‌های لغو شده
+                </h3>
+
+                <span class="badge bg-secondary rounded-pill px-3 py-2">
+                    {{ canceled_orders|length }}
+                </span>
+
+            </div>
+
+
+            <div class="row g-4">
+
+                {% for order in canceled_orders %}
+
+                    <div class="col-12 col-md-6 col-lg-4">
+
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                            <div class="card-body p-4">
+
+                                <div class="d-flex justify-content-between mb-3">
+
+                                    <span class="text-muted">
+
+                                        سفارش #{{ order.id }}
+
+                                    </span>
+
+                                    <span class="badge bg-secondary rounded-pill">
+
+                                        لغو شده
+
+                                    </span>
+
+                                </div>
+
+
+                                <h5 class="fw-bold">
+
+                                    {{ order.service.name }}
+
+                                </h5>
+
+
+                                <div class="text-muted mt-3">
+
+                                    تاریخ:
+
+                                    <strong class="jalali-date"
+                                            data-date="{{ order.slot_time.day|date:'Y-m-d' }}">
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="text-muted mt-2">
+
+                                    ساعت:
+
+                                    {{ order.slot_time.start_time|time:"H:i" }}
+
+                                    -
+
+                                    {{ order.slot_time.end_time|time:"H:i" }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- تبدیل تاریخ میلادی به شمسی -->
+<!-- ========================================= -->
+
+<script>
+
+function gregorianToJalali(gy, gm, gd) {
+
+    const g_d_m = [
+        0,
+        31,
+        59,
+        90,
+        120,
+        151,
+        181,
+        212,
+        243,
+        273,
+        304,
+        334
+    ];
+
+    let jy;
+
+    if (gy > 1600) {
+        jy = 979;
+        gy -= 1600;
+    } else {
+        jy = 0;
+        gy -= 621;
+    }
+
+    const gy2 = (gm > 2) ? (gy + 1) : gy;
+
+    let days =
+        (365 * gy)
+        + Math.floor((gy2 + 3) / 4)
+        - Math.floor((gy2 + 99) / 100)
+        + Math.floor((gy2 + 399) / 400)
+        - 80
+        + gd
+        + g_d_m[gm - 1];
+
+    jy += 33 * Math.floor(days / 12053);
+
+    days %= 12053;
+
+    jy += 4 * Math.floor(days / 1461);
+
+    days %= 1461;
+
+    if (days > 365) {
+
+        jy += Math.floor((days - 1) / 365);
+
+        days = (days - 1) % 365;
+
+    }
+
+    let jm;
+    let jd;
+
+    if (days < 186) {
+
+        jm = 1 + Math.floor(days / 31);
+
+        jd = 1 + (days % 31);
+
+    } else {
+
+        jm = 7 + Math.floor((days - 186) / 30);
+
+        jd = 1 + ((days - 186) % 30);
+
+    }
+
+    return [
+        jy,
+        jm,
+        jd
+    ];
+}
+
+
+const jalaliMonths = [
+    "فروردین",
+    "اردیبهشت",
+    "خرداد",
+    "تیر",
+    "مرداد",
+    "شهریور",
+    "مهر",
+    "آبان",
+    "آذر",
+    "دی",
+    "بهمن",
+    "اسفند"
+];
+
+
+document
+    .querySelectorAll(".jalali-date")
+    .forEach(function(element) {
+
+        const date = element.dataset.date;
+
+        const parts = date.split("-");
+
+        const gy = parseInt(parts[0]);
+        const gm = parseInt(parts[1]);
+        const gd = parseInt(parts[2]);
+
+        const result = gregorianToJalali(
+            gy,
+            gm,
+            gd
+        );
+
+        const jy = result[0];
+        const jm = result[1];
+        const jd = result[2];
+
+        element.textContent =
+            `${jd} ${jalaliMonths[jm - 1]} ${jy}`;
+
+    });
+
+</script>
+
+{% endblock %}
