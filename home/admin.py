@@ -3,49 +3,114 @@ from .models import Service, SlotTime, Category
 
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'created')
-    search_fields = ('name', 'slug')
-    # تولید خودکار اسلاگ بر اساس نام دسته‌بندی موقع تایپ در ادمین
-    prepopulated_fields = {'slug': ('name',)}
-
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    # ستون‌هایی که در لیست خدمات نشان داده می‌شوند
-    list_display = ('name', 'user', 'price_formatted', 'created')
-    
-    # امکان جستجو بر اساس نام خدمت، نام و نام کاربری آرایشگر
-    search_fields = ('name', 'user__username', 'user__first_name', 'user__last_name')
-    
-    # فیلتر برای جداسازی خدمات براساس آرایشگر
-    list_filter = ('user', 'created')
-    
-    # مرتب‌سازی بر اساس تازه‌ترین خدمات
-    ordering = ('-created',)
 
-    # متد برای نمایش سه رقم سه رقم قیمت در پنل ادمین
-    @admin.display(description='قیمت (تومان)')
-    def price_formatted(self, obj):
-        return f"{obj.price:,.0f}"
+    list_display = (
+        "id",
+        "name",
+        "user",
+        "category",
+        "price",
+    )
+
+    list_filter = (
+        "category",
+    )
+
+    search_fields = (
+        "name",
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+    )
+
+    def get_queryset(self, request):
+
+        qs = super().get_queryset(request)
+
+        if request.user.role == "hairstyler":
+            qs = qs.filter(
+                user=request.user
+            )
+
+        return qs
+
+    def get_exclude(self, request, obj=None):
+
+        if request.user.role == "hairstyler":
+            return ["user"]
+
+        return []
+
+    def save_model(self, request, obj, form, change):
+
+        if request.user.role == "hairstyler":
+            obj.user = request.user
+
+        super().save_model(
+            request,
+            obj,
+            form,
+            change,
+        )
 
 
 @admin.register(SlotTime)
 class SlotTimeAdmin(admin.ModelAdmin):
-    # ستون‌های اصلی جدول زمان‌ها
-    list_display = ('user', 'day', 'start_time', 'end_time', 'is_booked', 'created')
-    
-    # فیلترهای کاربردی (فیلتر بر اساس رزرو شده/خالی، آرایشگر و تاریخ)
-    list_filter = ('is_booked', 'user', 'day')
-    
-    # قابلیت جستجو
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'day')
-    
-    # ویرایش سریع وضعیت «رزرو شده» مستقیماً از داخل لیست
-    list_editable = ('is_booked',)
-    
-    # مرتب‌سازی بر اساس نزدیک‌ترین تاریخ و زمان
-    ordering = ('-day', 'start_time')
-    
-    # فیلتر تاریخ به صورت نوار بازشونده بالای صفحه
-    date_hierarchy = 'day'
+
+    list_display = (
+        "id",
+        "user",
+        "day",
+        "start_time",
+        "end_time",
+        "is_booked",
+    )
+
+    list_filter = (
+        "is_booked",
+        "day",
+    )
+
+    search_fields = (
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+    )
+
+    ordering = (
+        "day",
+        "start_time",
+    )
+
+    def get_queryset(self, request):
+
+        qs = super().get_queryset(request)
+
+        # آرایشگر فقط Slot های خودش را ببیند
+        if request.user.role == "hairstyler":
+            qs = qs.filter(
+                user=request.user
+            )
+
+        return qs
+
+    def get_exclude(self, request, obj=None):
+
+        if request.user.role == "hairstyler":
+            return ["user"]
+
+        return []
+
+    def save_model(self, request, obj, form, change):
+
+        if request.user.role == "hairstyler":
+            obj.user = request.user
+
+        super().save_model(
+            request,
+            obj,
+            form,
+            change,
+        )

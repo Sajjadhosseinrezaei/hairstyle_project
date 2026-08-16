@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from .models import User
 
+
 class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,3 +64,87 @@ class LoginForm(AuthenticationForm):
         ),
         'inactive': _('این حساب کاربری غیرفعال است.'),
     }
+
+
+class HairstylerRegisterForm(UserCreationForm):
+
+    class Meta:
+        model = User
+
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "password1",
+            "password2",
+        )
+
+        labels = {
+            "username": "نام کاربری",
+            "first_name": "نام",
+            "last_name": "نام خانوادگی",
+            "phone_number": "شماره موبایل",
+            "email": "ایمیل",
+            "password1": "رمز عبور",
+            "password2": "تکرار رمز عبور",
+        }
+
+        help_texts = {
+            "username": "حداکثر ۱۵۰ کاراکتر. فقط حروف، اعداد و @/./+/-/_ مجاز است.",
+            "phone_number": "شماره موبایل خود را وارد کنید.",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # کلاس‌های Bootstrap
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                "class": "form-control",
+            })
+
+        # placeholder
+        self.fields["username"].widget.attrs["placeholder"] = "نام کاربری"
+        self.fields["first_name"].widget.attrs["placeholder"] = "نام"
+        self.fields["last_name"].widget.attrs["placeholder"] = "نام خانوادگی"
+        self.fields["phone_number"].widget.attrs["placeholder"] = "09123456789"
+        self.fields["email"].widget.attrs["placeholder"] = "example@gmail.com"
+        self.fields["password1"].widget.attrs["placeholder"] = "رمز عبور"
+        self.fields["password2"].widget.attrs["placeholder"] = "تکرار رمز عبور"
+
+        # برای موبایل
+        self.fields["phone_number"].widget.attrs.update({
+            "dir": "ltr",
+            "inputmode": "numeric",
+        })
+
+        # برای ایمیل
+        self.fields["email"].widget.attrs.update({
+            "dir": "ltr",
+        })
+
+        # رمز عبور
+        self.fields["password1"].widget.attrs.update({
+            "autocomplete": "new-password",
+        })
+
+        self.fields["password2"].widget.attrs.update({
+            "autocomplete": "new-password",
+        })
+
+    def save(self, commit=True):
+
+        user = super().save(commit=False)
+
+        # نقش از سمت کاربر دریافت نمی‌شود
+        user.role = "hairstyler"
+
+        # تا زمان تأیید ادمین فعال نباشد
+        user.is_active = False
+
+        if commit:
+            user.save()
+
+        return user

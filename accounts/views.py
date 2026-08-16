@@ -5,6 +5,7 @@ from django.views import View
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from order.models import Order
+from .forms import HairstylerRegisterForm
 # Create your views here.
 
 
@@ -94,4 +95,64 @@ class ProfileView(LoginRequiredMixin, View):
             request,
             self.template_name,
             context,
+        )
+
+
+class HairstylerRegisterView(View):
+
+    template_name = "accounts/register_hairstyler.html"
+
+    def get(self, request):
+
+        form = HairstylerRegisterForm()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form
+            }
+        )
+
+    def post(self, request):
+
+        form = HairstylerRegisterForm(request.POST)
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect(
+                "accounts:hairstyler_register_success"
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form
+            }
+        )
+
+
+class HairstylerRegisterSuccessView(View):
+
+    template_name = "accounts/hairstyler_register_success.html"
+
+    def get(self, request):
+
+        return render(
+            request,
+            self.template_name
+        )
+
+
+class RegisterChoiceView(View):
+
+    template_name = "accounts/register_choice.html"
+
+    def get(self, request):
+        return render(
+            request,
+            self.template_name
         )

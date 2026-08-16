@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+ثبت‌نام موفق
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-body p-5 text-center">
+
+                    <i class="bi bi-check-circle-fill text-success fs-1"></i>
+
+                    <h2 class="fw-bold mt-3">
+                        ثبت‌نام با موفقیت انجام شد
+                    </h2>
+
+                    <p class="text-muted mt-3">
+                        درخواست ثبت‌نام شما به عنوان آرایشگر دریافت شد.
+                    </p>
+
+                    <p class="text-muted">
+                        پس از بررسی و تأیید مدیر، حساب شما فعال خواهد شد.
+                    </p>
+
+                    <a
+                        href="{% url 'home:home' %}"
+                        class="btn btn-primary rounded-pill px-4 mt-3"
+                    >
+                        بازگشت به صفحه اصلی
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
