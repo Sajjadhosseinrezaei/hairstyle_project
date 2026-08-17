@@ -1,0 +1,279 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}
+گزارش سفارش‌ها
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+
+    <h1>گزارش سفارش‌ها</h1>
+
+    <br>
+
+    <form method="get">
+
+        <div style="
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 25px;
+        ">
+
+            <div>
+                <label>
+                    تاریخ شروع:
+                </label>
+
+                <br>
+
+                <input
+                    type="date"
+                    name="start_date"
+                    value="{{ start_date|default:'' }}"
+                >
+            </div>
+
+
+            <div>
+                <label>
+                    تاریخ پایان:
+                </label>
+
+                <br>
+
+                <input
+                    type="date"
+                    name="end_date"
+                    value="{{ end_date|default:'' }}"
+                >
+            </div>
+
+
+            <div>
+
+                <button
+                    type="submit"
+                    class="button"
+                >
+                    نمایش گزارش
+                </button>
+
+            </div>
+
+            {% if report %}
+
+                <div>
+
+                    <button
+                        type="button"
+                        class="button"
+                        onclick="window.print()"
+                    >
+                        🖨 چاپ گزارش
+                    </button>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </form>
+
+
+    {% if report %}
+
+        <hr>
+
+        <h2>
+            گزارش از {{ start_date }}
+            تا {{ end_date }}
+        </h2>
+
+        <br>
+
+
+        <!-- خلاصه گزارش -->
+
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        ">
+
+            <div class="module">
+                <h2>کل سفارش‌ها</h2>
+                <p>
+                    {{ report.total_orders }}
+                </p>
+            </div>
+
+
+            <div class="module">
+                <h2>پرداخت شده</h2>
+                <p>
+                    {{ report.total_paid }}
+                </p>
+            </div>
+
+
+            <div class="module">
+                <h2>پرداخت نشده</h2>
+                <p>
+                    {{ report.total_unpaid }}
+                </p>
+            </div>
+
+
+            <div class="module">
+                <h2>لغو شده</h2>
+                <p>
+                    {{ report.total_canceled }}
+                </p>
+            </div>
+
+
+            <div class="module">
+                <h2>مجموع مبلغ</h2>
+                <p>
+                    {{ report.total_price|default:0 }}
+                    تومان
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- جزئیات سفارش‌ها -->
+
+        <div class="module">
+
+            <h2>
+                جزئیات سفارش‌ها
+            </h2>
+
+            <table
+                style="
+                    width: 100%;
+                    border-collapse: collapse;
+                "
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>شماره</th>
+
+                        <th>مشتری</th>
+
+                        <th>خدمت</th>
+
+                        <th>تاریخ نوبت</th>
+
+                        <th>ساعت</th>
+
+                        <th>مبلغ</th>
+
+                        <th>وضعیت</th>
+
+                        <th>تاریخ ثبت</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for order in orders %}
+
+                    <tr>
+
+                        <td>
+                            {{ order.id }}
+                        </td>
+
+                        <td>
+                            {{ order.user.username }}
+                        </td>
+
+                        <td>
+                            {{ order.service.name }}
+                        </td>
+
+                        <td>
+                            {{ order.slot_time.day }}
+                        </td>
+
+                        <td>
+                            {{ order.slot_time.start_time|time:"H:i" }}
+                            -
+                            {{ order.slot_time.end_time|time:"H:i" }}
+                        </td>
+
+                        <td>
+                            {{ order.price }}
+                            تومان
+                        </td>
+
+                        <td>
+                            {{ order.get_status_display }}
+                        </td>
+
+                        <td>
+                            {{ order.created|date:"Y-m-d H:i" }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            style="text-align: center;"
+                        >
+                            سفارشی در این بازه پیدا نشد.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<style>
+
+@media print {
+
+    #header,
+    #nav-sidebar,
+    .breadcrumbs,
+    form,
+    .object-tools {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+}
+
+</style>
+
+{% endblock %}
