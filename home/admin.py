@@ -3,6 +3,16 @@ from .models import Service, SlotTime, Category
 
 
 
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'created')
+    search_fields = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ('created',)
+    ordering = ('name',)
+
+
+    
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
 
